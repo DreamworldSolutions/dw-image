@@ -1,0 +1,43 @@
+{
+  "name": "@dreamworld/dw-image",
+  "version": "0.0.0-development",
+  "description": "A WebComponent to show zoomable image on documentation & blog sites",
+  "main": "dw-image.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DreamworldSolutions/dw-image.git"
+  },
+  "keywords": [
+    "image",
+    "zoomable-image"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DreamworldSolutions/dw-image/issues"
+  },
+  "devDependencies": {
+    "semantic-release": "17.0.8"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "resolutions": {
+    "tslib": "2.1.0"
+  },
+  "release": {
+    "branches": [
+      "+([0-9])?(.{+([0-9]),x}).x",
+      "main",
+      {
+        "name": "feature/*",
+        "prerelease": "${name.replace(/^feature\\//g,\"\")}",
+        "channel": "${name.replace(/^feature\\//g,\"\")}"
+      }
+    ]
+  },
+  "homepage": "https://github.com/DreamworldSolutions/dw-image#readme"
+}
