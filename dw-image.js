@@ -1,5 +1,6 @@
 import { LitElement, html, css } from "@dreamworld/pwa-helpers/lit.js";
 import { isElementAlreadyRegistered } from "@dreamworld/pwa-helpers/utils.js";
+import "@dreamworld/dw-icon-button";
 
 /**
  * A WebComponent to show zoomable image on documentation & blog sites.
@@ -46,6 +47,66 @@ export class DwImage extends LitElement {
       css`
         :host {
           display: block;
+          --dw-icon-color: white;
+        }
+
+        .image img {
+          height: 100%;
+          width: 100%;
+          cursor: pointer;
+        }
+
+        :host([auto="height"]) .image img {
+          height: auto;
+        }
+
+        :host([auto="width"]) .image img {
+          width: auto;
+        }
+
+        .over-lay {
+          position: fixed;
+          width: 100%;
+          height: 100%;
+          inset: 0px;
+          background-color: rgba(0, 0, 0, 0.8);
+          box-sizing: border-box;
+          z-index: 1500;
+        }
+
+        .button-wrapper {
+          position: absolute;
+          display: flex;
+          width: 100%;
+          justify-content: flex-end;
+          background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .zoom-image-wrapper {
+          display: flex;
+          justify-content: center;
+          width: 100%;
+          height: calc(100% - 48px);
+          box-sizing: border-box;
+          margin-top: 48px;
+        }
+
+        .zoom-image {
+          display: flex;
+          justify-content: center;
+          box-sizing: border-box;
+          padding: 20px;
+        }
+
+        .zoom-image img {
+          height: auto;
+          width: 100%;
+        }
+
+        @media only screen and (max-width: 820px) {
+          .zoom-image {
+            align-items: center;
+          }
         }
       `,
     ];
@@ -57,14 +118,14 @@ export class DwImage extends LitElement {
        * Image path/source.
        */
       src: {
-        type: String
+        type: String,
       },
 
       /**
        * Image title.
        */
       title: {
-        type: String
+        type: String,
       },
 
       /**
@@ -73,29 +134,75 @@ export class DwImage extends LitElement {
        * Possible value: height, width.
        */
       auto: {
-        type: String
+        type: String,
+        reflect: true,
+        attribute: "auto",
       },
 
       /**
        * Disabled zoom behaviour when this value is `true`.
        */
       disableZoom: {
-        type: Boolean
+        type: Boolean,
+        reflect: true,
+        attribute: "disableZoom",
       },
 
       /**
        * Zoomable image path.
        */
       zoomSrc: {
-        type: String
-      }
+        type: String,
+      },
     };
   }
 
   render() {
     return html`
+      <div class="image">
+        <img
+          @click=${() => {
+            this.disableZoom = true;
+          }}
+          .title=${this.title}
+          src=${this.src}
+          .auto=${this.auto}
+        />
+      </div>
+      ${this._setZoomImageTemplate}
     `;
   }
+
+  get _setZoomImageTemplate() {
+    if (!this.disableZoom) {
+      return;
+    }
+    return html` <div class="over-lay">
+      <div class="button-wrapper">
+        <dw-icon-button
+          @click=${() => {
+            this.disableZoom = false;
+          }}
+          icon="close"
+          iconFont="OUTLINED"
+        >
+        </dw-icon-button>
+      </div>
+      <div class="zoom-image-wrapper">
+        <div class="zoom-image">
+          <img .title=${this.title} src=${this._setZoomImageSrc} />
+        </div>
+      </div>
+    </div>`;
+  }
+
+  get _setZoomImageSrc() {
+    if (!this.zoomSrc) {
+      return this.src;
+    }
+    return this.zoomSrc;
+  }
+  
 }
 
 if (isElementAlreadyRegistered("dw-image")) {
