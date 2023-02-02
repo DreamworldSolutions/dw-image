@@ -50,26 +50,26 @@ export class DwImage extends LitElement {
           --dw-icon-color: white;
         }
 
-        .image img {
+        .image {
           height: 100%;
           width: 100%;
           cursor: pointer;
         }
 
-        :host([auto="height"]) .image img {
+        :host([auto="height"]) .image {
           height: auto;
         }
 
-        :host([auto="width"]) .image img {
+        :host([auto="width"]) .image {
           width: auto;
         }
 
-        .over-lay {
+        .overlay {
           position: fixed;
           width: 100%;
           height: 100%;
           inset: 0px;
-          background-color: rgba(0, 0, 0, 0.8);
+          background-color:var(--dw-overlay-background-color, rgba(0, 0, 0, 0.8)) ;
           box-sizing: border-box;
           z-index: 1500;
         }
@@ -79,7 +79,6 @@ export class DwImage extends LitElement {
           display: flex;
           width: 100%;
           justify-content: flex-end;
-          background-color: rgba(0, 0, 0, 0.3);
         }
 
         .zoom-image-wrapper {
@@ -97,7 +96,7 @@ export class DwImage extends LitElement {
           box-sizing: border-box;
           padding: 20px;
         }
-
+        
         .zoom-image img {
           height: auto;
           width: 100%;
@@ -144,8 +143,6 @@ export class DwImage extends LitElement {
        */
       disableZoom: {
         type: Boolean,
-        reflect: true,
-        attribute: "disableZoom",
       },
 
       /**
@@ -154,34 +151,45 @@ export class DwImage extends LitElement {
       zoomSrc: {
         type: String,
       },
+
+      _isZoomMode: {
+        type: String,
+      }
     };
+  }
+
+  constructor() {
+    super();
+    this.auto= 'height';
   }
 
   render() {
     return html`
-      <div class="image">
-        <img
+        <img class="image"
           @click=${() => {
-            this.disableZoom = true;
+            if(this.disableZoom) {
+              return;
+            }
+            this._isZoomMode = true;
           }}
           .title=${this.title}
           src=${this.src}
-          .auto=${this.auto}
+          .disableZoom=${this.disableZoom}
         />
-      </div>
-      ${this._setZoomImageTemplate}
+      ${this._zoomImageTemplate}
     `;
   }
 
-  get _setZoomImageTemplate() {
-    if (!this.disableZoom) {
+  get _zoomImageTemplate() {
+    if (!this._isZoomMode || this.disableZoom ) {
       return;
     }
-    return html` <div class="over-lay">
+
+    return html` <div class="overlay">
       <div class="button-wrapper">
         <dw-icon-button
           @click=${() => {
-            this.disableZoom = false;
+            this._isZoomMode = false;
           }}
           icon="close"
           iconFont="OUTLINED"
@@ -190,19 +198,12 @@ export class DwImage extends LitElement {
       </div>
       <div class="zoom-image-wrapper">
         <div class="zoom-image">
-          <img .title=${this.title} src=${this._setZoomImageSrc} />
+          <img .title=${this.title} src=${this.zoomSrc || this.src} />
         </div>
       </div>
     </div>`;
   }
 
-  get _setZoomImageSrc() {
-    if (!this.zoomSrc) {
-      return this.src;
-    }
-    return this.zoomSrc;
-  }
-  
 }
 
 if (isElementAlreadyRegistered("dw-image")) {
