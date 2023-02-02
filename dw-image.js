@@ -153,7 +153,7 @@ export class DwImage extends LitElement {
       },
 
       _isZoomMode: {
-        type: String,
+        type: Boolean,
       }
     };
   }
