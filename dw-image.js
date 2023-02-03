@@ -56,12 +56,18 @@ export class DwImage extends LitElement {
           cursor: pointer;
         }
 
+        :host([auto="height"]),
         :host([auto="height"]) .image {
-          height: auto;
+          height: auto !important;
         }
 
+        :host([auto="width"]),
         :host([auto="width"]) .image {
-          width: auto;
+          width: auto !important;
+        }
+
+        :host([disable-zoom]) .image {
+          cursor: default;
         }
 
         .overlay {
@@ -96,7 +102,7 @@ export class DwImage extends LitElement {
           box-sizing: border-box;
           padding: 20px;
         }
-        
+
         .zoom-image img {
           height: auto;
           width: 100%;
@@ -143,6 +149,8 @@ export class DwImage extends LitElement {
        */
       disableZoom: {
         type: Boolean,
+        reflect: true,
+        attribute: "disable-zoom",
       },
 
       /**
@@ -152,6 +160,10 @@ export class DwImage extends LitElement {
         type: String,
       },
 
+      /**
+       * Set `true` when user click on image and `disableZoom` is false.
+       * If `true` then show zoomable image view.
+       */
       _isZoomMode: {
         type: Boolean,
       }
