@@ -26,6 +26,11 @@ import "@dreamworld/dw-icon-button";
  *     ```html
  *       <dw-image auto='width' src='https://picsum.photos/id/237/200/300' zoom-src='https://picsum.photos/id/237/1000/1000'></dw-image>
  *     ```
+ * 
+ *  - Auto none
+ *     ```html
+ *       <dw-image auto='none' src='https://picsum.photos/id/237/200/300' zoom-src='https://picsum.photos/id/237/1000/1000'></dw-image>
+ *     ```
  *
  *     ```css
  *       <!-- In this above case you give a height css property as an element. -->
@@ -54,6 +59,7 @@ export class DwImage extends LitElement {
           height: 100%;
           width: 100%;
           cursor: pointer;
+          object-fit: var(--dw-image-object-fit, contain);
         }
 
         :host([auto="height"]),

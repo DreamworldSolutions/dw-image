@@ -24,6 +24,11 @@ A WebComponent to show zoomable image on documentation & blog sites.
        <dw-image auto='width' src='https://picsum.photos/id/237/200/300' zoom-src='https://picsum.photos/id/237/1000/1000'></dw-image>
      ```
 
+  - Auto none
+    ```html
+      <dw-image auto='none' src='https://picsum.photos/id/237/200/300' zoom-src='https://picsum.photos/id/237/1000/1000'></dw-image>
+    ```
+
      ```css
        <!-- In this above case you give a height css property as an element. -->
        dw-image {
@@ -41,7 +46,7 @@ A WebComponent to show zoomable image on documentation & blog sites.
 
 | Property      | Attribute     | Type      | Description                                      |
 |---------------|---------------|-----------|--------------------------------------------------|
-| `auto`        | `auto`        | `string`  | Auto compute css property name.<br />Default value: height<br />Possible value: height, width. |
+| `auto`        | `auto`        | `string`  | Auto compute css property name.<br />Default value: height<br />Possible value: height, width, none. |
 | `disableZoom` | `disable-zoom` | `boolean` | Disabled zoom behaviour when this value is `true`. |
 | `src`         | `src`         | `string`  | Image path/source.                               |
 | `title`       | `title`       | `string`  | Image title.                                     |
