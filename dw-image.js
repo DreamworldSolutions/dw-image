@@ -56,20 +56,21 @@ export class DwImage extends LitElement {
         }
 
         .image {
-          height: 100%;
-          width: 100%;
+          height: var(--kerika-image-height, 100%);
+          width: var(--kerika-image-width, 100%);
+          max-width: var(--kerika-image-max-width);
           cursor: pointer;
           object-fit: var(--dw-image-object-fit, contain);
         }
 
         :host([auto="height"]),
         :host([auto="height"]) .image {
-          height: auto !important;
+          height: var(--kerika-image-height, auto) !important;
         }
 
         :host([auto="width"]),
         :host([auto="width"]) .image {
-          width: auto !important;
+          width: var(--kerika-image-width, auto) !important;
         }
 
         :host([disable-zoom]) .image {
