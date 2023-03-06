@@ -191,7 +191,7 @@ export class DwImage extends LitElement {
             }
             this._isZoomMode = true;
           }}
-          .title=${this.title}
+          title=${this.title || ''}
           src=${this.src}
           .disableZoom=${this.disableZoom}
         />
