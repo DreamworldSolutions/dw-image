@@ -61,6 +61,11 @@ export class DwImage extends LitElement {
           max-width: var(--kerika-image-max-width);
           cursor: pointer;
           object-fit: var(--dw-image-object-fit, contain);
+          box-sizing: border-box;
+        }
+
+        :host([border]) .image {
+          border: var(--dw-image-border-width, 2px) solid var(--dw-image-border-color, #d8d8d8);
         }
 
         :host([auto="height"]),
