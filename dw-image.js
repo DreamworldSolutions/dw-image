@@ -185,6 +185,46 @@ export class DwImage extends LitElement {
   constructor() {
     super();
     this.auto= 'height';
+    this.__keydown = this.__keydown.bind(this);
+    this.__onlick = this.__onClick.bind(this);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener("click", this.__onClick);
+    window.addEventListener("keydown", this.__keydown);
+  }
+  
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener("click", this.__onClick);
+    window.removeEventListener("keydown", this.__keydown);
+  }
+  
+  __onClick(e) {
+    const paths = e.composedPath && e.composedPath() || e.path || [];
+    console.log("paths", paths);
+    let outsideImageClick  = true;
+    forEach(paths, function(el) {
+      if(el.tagName === 'IMG') {
+      outsideImageClick = false;
+      return;
+      }
+    });
+  
+    if(outsideImageClick) {
+      this._isZoomMode = false;
+      return;
+    }
+  }
+  
+  __keydown(e) {
+    let keycode = e.keycode;
+    let key = e.key;
+    if(keycode === 27 || key === 'Escape' || key === 'Esc') {
+        this._isZoomMode = false;
+        return;
+    }
   }
 
   render() {
