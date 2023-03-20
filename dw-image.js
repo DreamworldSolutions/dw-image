@@ -1,6 +1,7 @@
 import { LitElement, html, css } from "@dreamworld/pwa-helpers/lit.js";
 import { isElementAlreadyRegistered } from "@dreamworld/pwa-helpers/utils.js";
 import "@dreamworld/dw-icon-button";
+import forEach from 'lodash-es/forEach.js';
 
 /**
  * A WebComponent to show zoomable image on documentation & blog sites.
@@ -203,7 +204,6 @@ export class DwImage extends LitElement {
   
   __onClick(e) {
     const paths = e.composedPath && e.composedPath() || e.path || [];
-    console.log("paths", paths);
     let outsideImageClick  = true;
     forEach(paths, function(el) {
       if(el.tagName === 'IMG') {
