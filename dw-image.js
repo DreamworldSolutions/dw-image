@@ -187,7 +187,7 @@ export class DwImage extends LitElement {
     super();
     this.auto= 'height';
     this.__keydown = this.__keydown.bind(this);
-    this.__onlick = this.__onClick.bind(this);
+    this.__onClick = this.__onClick.bind(this);
   }
 
   connectedCallback() {
