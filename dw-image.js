@@ -238,6 +238,7 @@ export class DwImage extends LitElement {
           }}
           title=${this.title || ''}
           src=${this.src}
+          loading="lazy"
           .disableZoom=${this.disableZoom}
         />
       ${this._zoomImageTemplate}
@@ -262,7 +263,7 @@ export class DwImage extends LitElement {
       </div>
       <div class="zoom-image-wrapper">
         <div class="zoom-image">
-          <img .title=${this.title} src=${this.zoomSrc || this.src} />
+          <img loading="lazy" .title=${this.title} src=${this.zoomSrc || this.src} />
         </div>
       </div>
     </div>`;
