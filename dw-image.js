@@ -1,6 +1,5 @@
-import { LitElement, html, css } from "@dreamworld/pwa-helpers/lit.js";
-import { isElementAlreadyRegistered } from "@dreamworld/pwa-helpers/utils.js";
-import "@dreamworld/dw-icon-button";
+import { LitElement, html, css } from '@dreamworld/pwa-helpers/lit.js';
+import '@dreamworld/dw-icon-button';
 import forEach from 'lodash-es/forEach.js';
 
 /**
@@ -27,7 +26,7 @@ import forEach from 'lodash-es/forEach.js';
  *     ```html
  *       <dw-image auto='width' src='https://picsum.photos/id/237/200/300' zoom-src='https://picsum.photos/id/237/1000/1000'></dw-image>
  *     ```
- * 
+ *
  *  - Auto none
  *     ```html
  *       <dw-image auto='none' src='https://picsum.photos/id/237/200/300' zoom-src='https://picsum.photos/id/237/1000/1000'></dw-image>
@@ -45,6 +44,10 @@ import forEach from 'lodash-es/forEach.js';
  *        <dw-image src='https://picsum.photos/id/237/200/300' disable-zoom></dw-image>
  *      </a>
  *    ```
+ * @event dw-image-opened { image }
+ * @event dw-image-closed { image }
+ * @event dw-image-fullscreen { image, enabled }
+ *
  * @element dw-image
  */
 export class DwImage extends LitElement {
@@ -69,13 +72,13 @@ export class DwImage extends LitElement {
           border: var(--dw-image-border-width, 2px) solid var(--dw-image-border-color, #d8d8d8);
         }
 
-        :host([auto="height"]),
-        :host([auto="height"]) .image {
+        :host([auto='height']),
+        :host([auto='height']) .image {
           height: var(--kerika-image-height, auto) !important;
         }
 
-        :host([auto="width"]),
-        :host([auto="width"]) .image {
+        :host([auto='width']),
+        :host([auto='width']) .image {
           width: var(--kerika-image-width, auto) !important;
         }
 
@@ -88,7 +91,7 @@ export class DwImage extends LitElement {
           width: 100%;
           height: 100%;
           inset: 0px;
-          background-color:var(--dw-overlay-background-color, rgba(0, 0, 0, 0.8)) ;
+          background-color: var(--dw-overlay-background-color, rgba(0, 0, 0, 0.8));
           box-sizing: border-box;
           z-index: 1500;
         }
@@ -154,7 +157,7 @@ export class DwImage extends LitElement {
       auto: {
         type: String,
         reflect: true,
-        attribute: "auto",
+        attribute: 'auto',
       },
 
       /**
@@ -163,7 +166,7 @@ export class DwImage extends LitElement {
       disableZoom: {
         type: Boolean,
         reflect: true,
-        attribute: "disable-zoom",
+        attribute: 'disable-zoom',
       },
 
       /**
@@ -186,13 +189,13 @@ export class DwImage extends LitElement {
        */
       _fullScreen: {
         type: Boolean,
-      }
+      },
     };
   }
 
   constructor() {
     super();
-    this.auto= 'height';
+    this.auto = 'height';
     this.__keydown = this.__keydown.bind(this);
     this.__onClick = this.__onClick.bind(this);
     this.__fullScreenChange = this.__fullScreenChange.bind(this);
@@ -200,30 +203,38 @@ export class DwImage extends LitElement {
 
   updated(changedProperties) {
     super.updated(changedProperties);
-    if(changedProperties.has('_fullScreen')) {
-      if(this._fullScreen) {
-       this._requestFullScreen();
-       window.dispatchEvent(new CustomEvent("dw-image-fullscreen", { detail: { image: this.src, enabled: true } }));
+    if (changedProperties.has('_fullScreen')) {
+      if (this._fullScreen) {
+        this._requestFullScreen();
+        window.dispatchEvent(
+          new CustomEvent('dw-image-fullscreen', {
+            detail: { image: this.src, enabled: true },
+          })
+        );
       }
-      if(!this._fullScreen) {
+      if (!this._fullScreen) {
         this._exitFullScreen();
-        window.dispatchEvent(new CustomEvent("dw-image-fullscreen", { detail: { image: this.src, enabled: false } }));
+        window.dispatchEvent(
+          new CustomEvent('dw-image-fullscreen', {
+            detail: { image: this.src, enabled: false },
+          })
+        );
       }
     }
   }
 
   connectedCallback() {
     super.connectedCallback();
-    this.addEventListener("click", this.__onClick);
-    document.addEventListener("keydown", this.__keydown);
-    window.addEventListener("fullscreenchange", this.__fullScreenChange)
+    this.addEventListener('click', this.__onClick);
+    document.addEventListener('keydown', this.__keydown);
+    window.addEventListener('fullscreenchange', this.__fullScreenChange);
   }
-  
+
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener("click", this.__onClick);
-    document.removeEventListener("keydown", this.__keydown);
-    window.removeEventListener("fullscreenchange", this.__fullScreenChange)
+    this.removeEventListener('click', this.__onClick);
+    document.removeEventListener('keydown', this.__keydown);
+    window.removeEventListener('fullscreenchange', this.__fullScreenChange);
   }
 
   __fullScreenChange() {
@@ -233,80 +244,104 @@ export class DwImage extends LitElement {
     }
     this._fullScreen = false;
   }
-  
+
   __onClick(e) {
-    if(this._fullScreen) {
+    if (this._fullScreen) {
       return;
     }
-    
-    const paths = e.composedPath && e.composedPath() || e.path || [];
-    let outsideImageClick  = true;
-    forEach(paths, function(el) {
-      if(el.tagName === 'IMG' || (el.tagName === 'DW-ICON-BUTTON' && el.id === 'full-screen' ) ||  (el.tagName === 'DW-ICON-BUTTON' && el.id === 'exit-full-screen' ) ) {
-      outsideImageClick = false;
-      return;
+
+    const paths = (e.composedPath && e.composedPath()) || e.path || [];
+    let outsideImageClick = true;
+    forEach(paths, function (el) {
+      if (
+        el.tagName === 'IMG' ||
+        (el.tagName === 'DW-ICON-BUTTON' && el.id === 'close-btn') ||
+        (el.tagName === 'DW-ICON-BUTTON' && el.id === 'full-screen') ||
+        (el.tagName === 'DW-ICON-BUTTON' && el.id === 'exit-full-screen')
+      ) {
+        outsideImageClick = false;
+        return;
       }
     });
-  
-    if(outsideImageClick) {
+
+    if (outsideImageClick) {
       this._isZoomMode = false;
-      window.dispatchEvent(new CustomEvent("dw-image-closed", { detail: { image: this.src, ux: 'OVERLAY_CLICK' } })); 
+      window.dispatchEvent(
+        new CustomEvent('dw-image-closed', {
+          detail: { image: this.src, ux: 'OVERLAY_CLICK' },
+        })
+      );
       return;
     }
   }
-  
+
   __keydown(e) {
     let keycode = e.keycode;
     let key = e.key;
-    if(keycode === 27 || key === 'Escape' || key === 'Esc') {
-        this._isZoomMode = false;
-        window.dispatchEvent(new CustomEvent("dw-image-closed", { detail: { image: this.src, ux: 'ESC' } }));
-        return;
+    if (keycode === 27 || key === 'Escape' || key === 'Esc') {
+      this._isZoomMode = false;
+      window.dispatchEvent(
+        new CustomEvent('dw-image-closed', {
+          detail: { image: this.src, ux: 'ESC' },
+        })
+      );
+      return;
     }
   }
 
   render() {
     return html`
-        <img class="image"
-          @click=${this._setZoomMode}
-          title=${this.title || ''}
-          src=${this.src}
-          loading="lazy"
-          .disableZoom=${this.disableZoom}
-        />
+      <img
+        class="image"
+        @click=${this._setZoomMode}
+        title=${this.title || ''}
+        src=${this.src}
+        loading="lazy"
+        .disableZoom=${this.disableZoom}
+      />
       ${this._zoomImageTemplate}
     `;
   }
 
   _setZoomMode() {
-    if(this.disableZoom) {
+    if (this.disableZoom) {
       return;
-      }
+    }
 
     this._isZoomMode = true;
-    window.dispatchEvent(new CustomEvent("dw-image-opened", { detail: { image: this.src } }));
+    window.dispatchEvent(new CustomEvent('dw-image-opened', { detail: { image: this.src } }));
   }
 
   get _zoomImageTemplate() {
-    if (!this._isZoomMode || this.disableZoom ) {
+    if (!this._isZoomMode || this.disableZoom) {
       return;
     }
 
     return html` <div class="overlay">
       <div class="button-wrapper">
-        ${this._fullScreen ? html ` <dw-icon-button
-          id= 'exit-full-screen'
-          @click=${() => {this._fullScreen = false }}
-          icon="fullscreen_exit"
-          iconFont="OUTLINED"></dw-icon-button>` : 
-          html ` <dw-icon-button
-          id='full-screen'
-          @click=${() => {this._fullScreen = true }}
-          icon="fullscreen"
-          iconFont="OUTLINED"></dw-icon-button>`}
+        ${
+          this._fullScreen
+            ? html` <dw-icon-button
+                id="exit-full-screen"
+                @click=${() => {
+                  this._fullScreen = false;
+                }}
+                icon="fullscreen_exit"
+                iconFont="OUTLINED"
+              ></dw-icon-button>`
+            : html` <dw-icon-button
+                id="full-screen"
+                @click=${() => {
+                  this._fullScreen = true;
+                }}
+                icon="fullscreen"
+                iconFont="OUTLINED"
+              ></dw-icon-button>`
+        }
      
         </dw-icon-button>
         <dw-icon-button
+          id="close-btn"
           @click=${this._closeZoomImage}
           icon="close"
           iconFont="OUTLINED"
@@ -322,8 +357,18 @@ export class DwImage extends LitElement {
   }
 
   _closeZoomImage() {
-    this._isZoomMode = false;
-    window.dispatchEvent(new CustomEvent("dw-image-closed", { detail: { image: this.src, ux: 'CLOSE_BUTTON' } })); 
+    if (this._fullScreen) {
+      this._fullScreen = false;
+    }
+
+    setTimeout(() => {
+      this._isZoomMode = false;
+      window.dispatchEvent(
+        new CustomEvent('dw-image-closed', {
+          detail: { image: this.src, ux: 'CLOSE_BUTTON' },
+        })
+      );
+    }, 100);
   }
 
   get _requstedFullScreenEl() {
@@ -331,33 +376,32 @@ export class DwImage extends LitElement {
   }
 
   _requestFullScreen() {
-   if(this._fullScreen && !document.fullscreenElement) {
+    if (this._fullScreen && !document.fullscreenElement) {
       if (this._requstedFullScreenEl.requestFullscreen) {
         this._requstedFullScreenEl.requestFullscreen();
-      } else if (this._requstedFullScreenEl.webkitRequestFullscreen) { /* Safari */
+      } else if (this._requstedFullScreenEl.webkitRequestFullscreen) {
+        /* Safari */
         this._requstedFullScreenEl.webkitRequestFullscreen();
-      } else if (this._requstedFullScreenEl.msRequestFullscreen) { /* IE11 */
+      } else if (this._requstedFullScreenEl.msRequestFullscreen) {
+        /* IE11 */
         this._requstedFullScreenEl.msRequestFullscreen();
       }
     }
   }
 
   _exitFullScreen() {
-      if(!this._fullScreen && document.fullscreenElement ) {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) { /* Safari */
-      document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) { /* IE11 */
-      document.mozCancelFullScreen();
+    if (!this._fullScreen && document.fullscreenElement) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        /* Safari */
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        /* IE11 */
+        document.mozCancelFullScreen();
+      }
     }
   }
-  }
-
 }
 
-if (isElementAlreadyRegistered("dw-image")) {
-  console.warn("lit: 'dw-image' is already registered, so registration skipped.");
-} else {
-  customElements.define("dw-image", DwImage);
-}
+customElements.define('dw-image', DwImage);
