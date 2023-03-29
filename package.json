@@ -44,5 +44,10 @@
       }
     ]
   },
-  "homepage": "https://github.com/DreamworldSolutions/dw-image#readme"
+  "homepage": "https://github.com/DreamworldSolutions/dw-image#readme",
+  "prettier": {
+    "singleQuote": true,
+    "arrowParens": "avoid",
+    "printWidth": 140
+  }
 }
