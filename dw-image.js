@@ -327,7 +327,7 @@ export class DwImage extends LitElement {
   }
 
   _requestFullScreen() {
-   if(this._fullScreen) {
+   if(this._fullScreen && !document.fullscreenElement) {
       if (this._requstedFullScreenEl.requestFullscreen) {
         this._requstedFullScreenEl.requestFullscreen();
       } else if (this._requstedFullScreenEl.webkitRequestFullscreen) { /* Safari */
