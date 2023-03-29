@@ -203,9 +203,11 @@ export class DwImage extends LitElement {
     if(changedProperties.has('_fullScreen')) {
       if(this._fullScreen) {
        this._requestFullScreen();
+       window.dispatchEvent(new CustomEvent("dw-image-fullscreen", { detail: { image: this.src, enabled: true } }));
       }
       if(!this._fullScreen) {
         this._exitFullScreen();
+        window.dispatchEvent(new CustomEvent("dw-image-fullscreen", { detail: { image: this.src, enabled: false } }));
       }
     }
   }
@@ -225,12 +227,11 @@ export class DwImage extends LitElement {
   }
 
   __fullScreenChange() {
-    if(document.fullscreenElement) {
-      this._fullScreen = true
+    if (document.fullscreenElement) {
+      this._fullScreen = true;
+      return;
     }
-    else {
-      this._fullScreen = false;
-    }
+    this._fullScreen = false;
   }
   
   __onClick(e) {
@@ -254,12 +255,6 @@ export class DwImage extends LitElement {
     let keycode = e.keycode;
     let key = e.key;
     if(keycode === 27 || key === 'Escape' || key === 'Esc') {
-        if(this._fullScreen){
-          this._fullScreen = false;
-          window.dispatchEvent(new CustomEvent("dw-image-fullscreen", { detail: { image: this.src, enabled: false } }));
-          return;
-        }
-
         this._isZoomMode = false;
         window.dispatchEvent(new CustomEvent("dw-image-closed", { detail: { image: this.src, ux: 'ESC' } }));
         return;
@@ -340,7 +335,6 @@ export class DwImage extends LitElement {
       } else if (this._requstedFullScreenEl.msRequestFullscreen) { /* IE11 */
         this._requstedFullScreenEl.msRequestFullscreen();
       }
-      window.dispatchEvent(new CustomEvent("dw-image-fullscreen", { detail: { image: this.src, enabled: true } }));
     }
   }
 
@@ -353,10 +347,9 @@ export class DwImage extends LitElement {
     } else if (document.msExitFullscreen) { /* IE11 */
       document.mozCancelFullScreen();
     }
-    window.dispatchEvent(new CustomEvent("dw-image-fullscreen", { detail: { image: this.src, enabled: false } }));
   }
   }
-  
+
 }
 
 if (isElementAlreadyRegistered("dw-image")) {
