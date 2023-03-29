@@ -235,6 +235,10 @@ export class DwImage extends LitElement {
   }
   
   __onClick(e) {
+    if(this._fullScreen) {
+      return;
+    }
+    
     const paths = e.composedPath && e.composedPath() || e.path || [];
     let outsideImageClick  = true;
     forEach(paths, function(el) {
