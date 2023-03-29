@@ -179,6 +179,13 @@ export class DwImage extends LitElement {
        */
       _isZoomMode: {
         type: Boolean,
+      },
+
+      /**
+       * Toggles when clicks on full_screen icon.
+       */
+      _fullScreen: {
+        type: Boolean,
       }
     };
   }
@@ -188,25 +195,50 @@ export class DwImage extends LitElement {
     this.auto= 'height';
     this.__keydown = this.__keydown.bind(this);
     this.__onClick = this.__onClick.bind(this);
+    this.__fullScreenChange = this.__fullScreenChange.bind(this);
+  }
+
+  updated(changedProperties) {
+    super.updated(changedProperties);
+    if(changedProperties.has('_fullScreen')) {
+      if(this._fullScreen) {
+       this._requestFullScreen();
+       window.dispatchEvent(new CustomEvent("dw-image-fullscreen", { detail: { image: this.src, enabled: true } }));
+      }
+      if(!this._fullScreen) {
+        this._exitFullScreen();
+        window.dispatchEvent(new CustomEvent("dw-image-fullscreen", { detail: { image: this.src, enabled: false } }));
+      }
+    }
   }
 
   connectedCallback() {
     super.connectedCallback();
     this.addEventListener("click", this.__onClick);
-    window.addEventListener("keydown", this.__keydown);
+    document.addEventListener("keydown", this.__keydown);
+    window.addEventListener("fullscreenchange", this.__fullScreenChange)
   }
   
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener("click", this.__onClick);
-    window.removeEventListener("keydown", this.__keydown);
+    document.removeEventListener("keydown", this.__keydown);
+    window.removeEventListener("fullscreenchange", this.__fullScreenChange)
+  }
+
+  __fullScreenChange() {
+    if (document.fullscreenElement) {
+      this._fullScreen = true;
+      return;
+    }
+    this._fullScreen = false;
   }
   
   __onClick(e) {
     const paths = e.composedPath && e.composedPath() || e.path || [];
     let outsideImageClick  = true;
     forEach(paths, function(el) {
-      if(el.tagName === 'IMG') {
+      if(el.tagName === 'IMG' || (el.tagName === 'DW-ICON-BUTTON' && el.id === 'full-screen' ) ||  (el.tagName === 'DW-ICON-BUTTON' && el.id === 'exit-full-screen' ) ) {
       outsideImageClick = false;
       return;
       }
@@ -214,6 +246,7 @@ export class DwImage extends LitElement {
   
     if(outsideImageClick) {
       this._isZoomMode = false;
+      window.dispatchEvent(new CustomEvent("dw-image-closed", { detail: { image: this.src, ux: 'OVERLAY_CLICK' } })); 
       return;
     }
   }
@@ -223,6 +256,7 @@ export class DwImage extends LitElement {
     let key = e.key;
     if(keycode === 27 || key === 'Escape' || key === 'Esc') {
         this._isZoomMode = false;
+        window.dispatchEvent(new CustomEvent("dw-image-closed", { detail: { image: this.src, ux: 'ESC' } }));
         return;
     }
   }
@@ -230,12 +264,7 @@ export class DwImage extends LitElement {
   render() {
     return html`
         <img class="image"
-          @click=${() => {
-            if(this.disableZoom) {
-              return;
-            }
-            this._isZoomMode = true;
-          }}
+          @click=${this._setZoomMode}
           title=${this.title || ''}
           src=${this.src}
           loading="lazy"
@@ -245,6 +274,15 @@ export class DwImage extends LitElement {
     `;
   }
 
+  _setZoomMode() {
+    if(this.disableZoom) {
+      return;
+      }
+
+    this._isZoomMode = true;
+    window.dispatchEvent(new CustomEvent("dw-image-opened", { detail: { image: this.src } }));
+  }
+
   get _zoomImageTemplate() {
     if (!this._isZoomMode || this.disableZoom ) {
       return;
@@ -252,10 +290,20 @@ export class DwImage extends LitElement {
 
     return html` <div class="overlay">
       <div class="button-wrapper">
+        ${this._fullScreen ? html ` <dw-icon-button
+          id= 'exit-full-screen'
+          @click=${() => {this._fullScreen = false }}
+          icon="fullscreen_exit"
+          iconFont="OUTLINED"></dw-icon-button>` : 
+          html ` <dw-icon-button
+          id='full-screen'
+          @click=${() => {this._fullScreen = true }}
+          icon="fullscreen"
+          iconFont="OUTLINED"></dw-icon-button>`}
+     
+        </dw-icon-button>
         <dw-icon-button
-          @click=${() => {
-            this._isZoomMode = false;
-          }}
+          @click=${this._closeZoomImage}
           icon="close"
           iconFont="OUTLINED"
         >
@@ -267,6 +315,39 @@ export class DwImage extends LitElement {
         </div>
       </div>
     </div>`;
+  }
+
+  _closeZoomImage() {
+    this._isZoomMode = false;
+    window.dispatchEvent(new CustomEvent("dw-image-closed", { detail: { image: this.src, ux: 'CLOSE_BUTTON' } })); 
+  }
+
+  get _requstedFullScreenEl() {
+    return this.renderRoot?.querySelector('.overlay');
+  }
+
+  _requestFullScreen() {
+   if(this._fullScreen && !document.fullscreenElement) {
+      if (this._requstedFullScreenEl.requestFullscreen) {
+        this._requstedFullScreenEl.requestFullscreen();
+      } else if (this._requstedFullScreenEl.webkitRequestFullscreen) { /* Safari */
+        this._requstedFullScreenEl.webkitRequestFullscreen();
+      } else if (this._requstedFullScreenEl.msRequestFullscreen) { /* IE11 */
+        this._requstedFullScreenEl.msRequestFullscreen();
+      }
+    }
+  }
+
+  _exitFullScreen() {
+      if(!this._fullScreen && document.fullscreenElement ) {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) { /* Safari */
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) { /* IE11 */
+      document.mozCancelFullScreen();
+    }
+  }
   }
 
 }
