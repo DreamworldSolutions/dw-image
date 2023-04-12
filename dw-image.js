@@ -203,7 +203,7 @@ export class DwImage extends LitElement {
 
   updated(changedProperties) {
     super.updated(changedProperties);
-    if (changedProperties.has('_fullScreen')) {
+    if (changedProperties.has('_fullScreen') && this._isZoomMode) {
       if (this._fullScreen) {
         this._requestFullScreen();
         window.dispatchEvent(
@@ -279,6 +279,10 @@ export class DwImage extends LitElement {
     let keycode = e.keycode;
     let key = e.key;
     if (keycode === 27 || key === 'Escape' || key === 'Esc') {
+      if(!this._isZoomMode){
+        return;
+      }
+
       this._isZoomMode = false;
       window.dispatchEvent(
         new CustomEvent('dw-image-closed', {
