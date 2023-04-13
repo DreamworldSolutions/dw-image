@@ -160,6 +160,11 @@ export class DwImage extends LitElement {
         attribute: 'auto',
       },
 
+      loading: {
+        type: String,
+        reflect: true
+      },
+
       /**
        * Disabled zoom behaviour when this value is `true`.
        */
@@ -199,6 +204,7 @@ export class DwImage extends LitElement {
     this.__keydown = this.__keydown.bind(this);
     this.__onClick = this.__onClick.bind(this);
     this.__fullScreenChange = this.__fullScreenChange.bind(this);
+    this.loading = "lazy"
   }
 
   updated(changedProperties) {
@@ -300,7 +306,7 @@ export class DwImage extends LitElement {
         @click=${this._setZoomMode}
         title=${this.title || ''}
         src=${this.src}
-        loading="lazy"
+        loading="${this.loading}"
         .disableZoom=${this.disableZoom}
       />
       ${this._zoomImageTemplate}
