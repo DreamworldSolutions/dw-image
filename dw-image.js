@@ -63,7 +63,6 @@ export class DwImage extends LitElement {
           height: var(--dw-image-height, 100%);
           width: var(--dw-image-width, 100%);
           max-width: var(--dw-image-max-width);
-          cursor: pointer;
           object-fit: var(--dw-image-object-fit, contain);
           box-sizing: border-box;
         }
@@ -82,8 +81,8 @@ export class DwImage extends LitElement {
           width: var(--dw-image-width, auto) !important;
         }
 
-        :host([disable-zoom]) .image {
-          cursor: default;
+        :host(:not([disable-zoom])) .image {
+          cursor: pointer;
         }
 
         .overlay {
