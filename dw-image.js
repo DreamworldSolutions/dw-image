@@ -194,6 +194,14 @@ export class DwImage extends LitElement {
       _fullScreen: {
         type: Boolean,
       },
+
+      /**
+       * When original image is not loaded shows a fallback image.
+       * fallback Image path/source.
+       */
+      fallBackSrc: {
+        type: String
+      },
     };
   }
 
@@ -203,7 +211,7 @@ export class DwImage extends LitElement {
     this.__keydown = this.__keydown.bind(this);
     this.__onClick = this.__onClick.bind(this);
     this.__fullScreenChange = this.__fullScreenChange.bind(this);
-    this.loading = "lazy"
+    this.loading = "lazy";
   }
 
   updated(changedProperties) {
@@ -307,6 +315,7 @@ export class DwImage extends LitElement {
         src=${this.src}
         loading="${this.loading}"
         .disableZoom=${this.disableZoom}
+        onerror="this.onerror=null;this.src='${this.fallBackSrc}'"
       />
       ${this._zoomImageTemplate}
     `;
@@ -359,7 +368,7 @@ export class DwImage extends LitElement {
       </div>
       <div class="zoom-image-wrapper">
         <div class="zoom-image">
-          <img loading="lazy" .title=${this.title} src=${this.zoomSrc || this.src} />
+          <img loading="lazy" .title=${this.title} src=${this.zoomSrc || this.src} onerror="this.onerror=null;this.src='${this.fallBackSrc}'" />
         </div>
       </div>
     </div>`;
