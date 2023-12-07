@@ -315,7 +315,7 @@ export class DwImage extends LitElement {
         src=${this.src}
         loading="${this.loading}"
         .disableZoom=${this.disableZoom}
-        onerror="this.onerror=null;this.src='${this.fallBackSrc}'"
+        onerror="this.onerror=null;this.src='${this.fallBackSrc || this.src}'"
       />
       ${this._zoomImageTemplate}
     `;
@@ -368,7 +368,7 @@ export class DwImage extends LitElement {
       </div>
       <div class="zoom-image-wrapper">
         <div class="zoom-image">
-          <img loading="lazy" .title=${this.title} src=${this.zoomSrc || this.src} onerror="this.onerror=null;this.src='${this.fallBackSrc}'" />
+          <img loading="lazy" .title=${this.title} src=${this.zoomSrc || this.src} onerror="this.onerror=null;this.src='${this.fallBackSrc || this.zoomSrc || this.src}'" />
         </div>
       </div>
     </div>`;
