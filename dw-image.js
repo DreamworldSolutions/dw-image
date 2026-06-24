@@ -202,6 +202,10 @@ export class DwImage extends LitElement {
       fallBackSrc: {
         type: String
       },
+
+      alt: {
+        type: String
+      }
     };
   }
 
@@ -316,6 +320,7 @@ export class DwImage extends LitElement {
         loading="${this.loading}"
         .disableZoom=${this.disableZoom}
         onerror="this.onerror=null;this.src='${this.fallBackSrc || this.src}'"
+        alt=${this.alt || ''}
       />
       ${this._zoomImageTemplate}
     `;
