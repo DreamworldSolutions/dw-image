@@ -377,7 +377,7 @@ export class DwImage extends LitElement {
       </div>
       <div class="zoom-image-wrapper">
         <div class="zoom-image">
-          <img loading="lazy" .title=${this.title} src=${this.zoomSrc || this.src} onerror="this.onerror=null;this.src='${this.fallBackSrc || this.zoomSrc || this.src}'" />
+          <img loading="lazy" .title=${this.title} src=${this.zoomSrc || this.src} onerror="this.onerror=null;this.src='${this.fallBackSrc || this.zoomSrc || this.src}'" alt=${this.alt || ''} />
         </div>
       </div>
     </div>`;
