@@ -203,6 +203,10 @@ export class DwImage extends LitElement {
         type: String
       },
 
+      /**
+       * Alternate text for the image
+       * used for accessibility and displayed if the image cannot be loaded.
+       */
       alt: {
         type: String
       }
